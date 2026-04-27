@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>複製文圖書館 Copypasta Library</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #3498db;
+            --bg-color: #f4f7f6;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 { color: var(--primary-color); margin-bottom: 10px; }
+
+        .search-container {
+            width: 100%;
+            max-width: 600px;
+            margin-bottom: 30px;
+        }
+
+        #searchInput {
+            width: 100%;
+            padding: 12px 20px;
+            font-size: 16px;
+            border: 2px solid #ddd;
+            border-radius: 25px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        #searchInput:focus { border-color: var(--accent-color); }
+
+        .library-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            width: 100%;
+            max-width: 1000px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .card-content {
+            font-size: 14px;
+            color: #444;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            white-space: pre-wrap; /* 保留換行 */
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .tag {
+            background: #e1f5fe;
+            color: #039be5;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .copy-btn {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .copy-btn:hover { background-color: #2980b9; }
+
+        .no-results {
+            grid-column: 1 / -1;
+            text-align: center;
+            color: #888;
+            margin-top: 50px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>📚 複製文圖書館</h1>
+    
+    <div class="search-container">
+        <input type="text" id="searchInput" placeholder="搜尋關鍵字或標籤..." onkeyup="searchCopypasta()">
+    </div>
+
+    <div class="library-grid" id="libraryGrid">
+        </div>
+
+    <script>
+        // 這裡存放你的複製文資料
+        const pastas = [
+            {
+                content: "真的太無情了！無情轉身、無情開噴！",
+                tag: "張家航"
+            },
+            {
+                content: "雖然我不知道你在說什麼，但聽起來很有道理。",
+                tag: "萬用"
+            },
+            {
+                content: "所謂的強者，就是即使身處黑暗，也能看見光的人。",
+                tag: "勵志(?)"
+            },
+            {
+                content: "工程師說：這在我電腦上跑得起來啊 (It works on my machine)。",
+                tag: "科技"
+            }
+        ];
+
+        function displayPastas(filter = '') {
+            const grid = document.getElementById('libraryGrid');
+            grid.innerHTML = '';
+
+            const filteredPastas = pastas.filter(p => 
+                p.content.toLowerCase().includes(filter.toLowerCase()) || 
+                p.tag.toLowerCase().includes(filter.toLowerCase())
+            );
+
+            if (filteredPastas.length === 0) {
+                grid.innerHTML = '<div class="no-results">找不到相關的複製文 (´;ω;`)</div>';
+                return;
+            }
+
+            filteredPastas.forEach(p => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <div class="card-content">${p.content}</div>
+                    <div class="card-footer">
+                        <span class="tag">#${p.tag}</span>
+                        <button class="copy-btn" onclick="copyToClipboard('${p.content.replace(/\n/g, '\\n')}')">複製</button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function searchCopypasta() {
+            const input = document.getElementById('searchInput').value;
+            displayPastas(input);
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert('已複製到剪貼簿！');
+            });
+        }
+
+        // 初始載入
+        displayPastas();
+    </script>
+</body>
+</html>
