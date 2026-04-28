@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
 async function fetchData() {
     try {
         // 讀取同資料夾下的 data.json
-        const response = await fetch('data.json');
+        const response = await fetch('/data.json');
         
         if (!response.ok) {
             throw new Error('無法讀取資料庫檔案');
