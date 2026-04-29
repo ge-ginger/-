@@ -38,12 +38,50 @@ h1 { color: var(--primary-color); margin-bottom: 20px; }
     box-shadow: 0 0 8px rgba(52, 152, 219, 0.3);
 }
 
+/* 修改原本的網格設定 */
 .library-grid {
     display: grid;
+    /* 預設：電腦版自動填滿，最小 300px */
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 20px;
+    gap: 15px; /* 手機端間距稍微縮小一點比較美觀 */
     width: 100%;
     max-width: 1200px;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+/* 新增：手機端專用樣式 (針對螢幕寬度小於 600px 的裝置) */
+@media (max-width: 600px) {
+    .library-grid {
+        /* 強制顯示成兩欄，每欄平分 1fr */
+        grid-template-columns: repeat(2, 1fr); 
+        gap: 10px; /* 縮小間距以節省空間 */
+        padding: 5px;
+    }
+
+    .card {
+        padding: 12px; /* 縮小內距 */
+    }
+
+    .card-title {
+        font-size: 0.9em; /* 標題稍微變小 */
+        margin-bottom: 5px;
+    }
+
+    .card-content {
+        font-size: 12px; /* 內文縮小，適合手機閱讀 */
+        max-height: 100px; /* 縮短高度，避免單張卡片佔據整面螢幕 */
+    }
+
+    .tag {
+        font-size: 10px; /* 標籤縮小 */
+        padding: 2px 6px;
+    }
+
+    .copy-btn {
+        padding: 6px 10px; /* 按鈕變小，比較好塞進兩欄排版 */
+        font-size: 12px;
+    }
 }
 
 .card {
