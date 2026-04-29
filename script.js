@@ -115,16 +115,27 @@ function displayPastas(data) {
 
 // 彈窗控制邏輯
 function openModal(title, content, tags) {
-    document.getElementById('modalTitle').innerText = title;
-    document.getElementById('modalBody').innerText = content;
-    
-    // 處理標籤顯示
-    const modalTagsContainer = document.getElementById('modalTags');
-    if (tags && tags.length > 0) {
-        modalTagsContainer.innerHTML = tags.map(tag => `<span class="tag">#${tag}</span>`).join('');
-        modalTagsContainer.style.display = 'flex';
-    } else {
-        modalTagsContainer.style.display = 'none';
+    const modalTitle = document.getElementById('modalTitle');
+    const modalBody = document.getElementById('modalBody');
+    const modalTags = document.getElementById('modalTags');
+
+    if (modalTitle) modalTitle.innerText = title;
+    if (modalBody) modalBody.innerText = content;
+
+    if (modalTags) {
+        // 清空舊標籤並加入新標籤
+        modalTags.innerHTML = ''; 
+        if (tags && tags.length > 0) {
+            tags.forEach(t => {
+                const span = document.createElement('span');
+                span.className = 'tag';
+                span.innerText = `#${t}`;
+                modalTags.appendChild(span);
+            });
+            modalTags.style.display = 'flex';
+        } else {
+            modalTags.style.display = 'none';
+        }
     }
 
     document.getElementById('copyModal').style.display = 'flex';
