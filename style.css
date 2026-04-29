@@ -9,7 +9,10 @@ body {
     font-family: 'Segoe UI', "Microsoft JhengHei", sans-serif;
     background-color: var(--bg-color);
     margin: 0;
-    padding: 20px;
+    padding: 10px;
+    overflow-x: hidden;
+    width: 100vw;
+    box-sizing: border-box;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -53,33 +56,42 @@ h1 { color: var(--primary-color); margin-bottom: 20px; }
 /* 新增：手機端專用樣式 (針對螢幕寬度小於 600px 的裝置) */
 @media (max-width: 600px) {
     .library-grid {
-        /* 強制顯示成兩欄，每欄平分 1fr */
-        grid-template-columns: repeat(2, 1fr); 
-        gap: 10px; /* 縮小間距以節省空間 */
+        /* 關鍵：使用 1fr 1fr 確保兩欄平分，不設最小寬度 */
+        grid-template-columns: 1fr 1fr; 
+        gap: 8px; /* 縮小間距，讓內容空間更大 */
         padding: 5px;
     }
 
     .card {
-        padding: 12px; /* 縮小內距 */
+        padding: 10px;
+        min-width: 0; /* 關鍵：防止內容撐開 grid 容器 */
+        word-wrap: break-word; /* 確保長文字會斷行 */
     }
 
     .card-title {
-        font-size: 0.9em; /* 標題稍微變小 */
-        margin-bottom: 5px;
+        font-size: 0.9rem;
+        /* 避免標題太長衝破卡片 */
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
     }
 
     .card-content {
-        font-size: 12px; /* 內文縮小，適合手機閱讀 */
-        max-height: 100px; /* 縮短高度，避免單張卡片佔據整面螢幕 */
+        font-size: 13px;
+        height: 80px; /* 固定高度讓排版整齊 */
+        overflow-y: auto;
     }
 
-    .tag {
-        font-size: 10px; /* 標籤縮小 */
-        padding: 2px 6px;
+    .card-footer {
+        flex-direction: column; /* 腳部改為垂直排列 */
+        align-items: flex-start;
+        gap: 5px;
     }
 
     .copy-btn {
-        padding: 6px 10px; /* 按鈕變小，比較好塞進兩欄排版 */
+        width: 100%; /* 按鈕變成長條，更方便手指點擊 */
+        padding: 6px 0;
         font-size: 12px;
     }
 }
