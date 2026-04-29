@@ -20,20 +20,38 @@ body {
 
 h1 { color: var(--primary-color); margin-bottom: 20px; }
 
+/* 1. 容器在手機上應橫跨較大的比例 */
 .search-container {
-    width: 100%;
-    max-width: 600px;
-    margin-bottom: 30px;
+    width: 95%; /* 手機端佔據 95% 的寬度 */
+    max-width: 600px; /* 電腦版最大限制在 600px */
+    margin: 10px auto 20px auto; /* 上下邊距調整，auto 確保水平居中 */
+    display: flex;
+    justify-content: center;
 }
 
+/* 2. 搜尋輸入框設定 */
 #searchInput {
-    width: 100%;
-    padding: 12px 25px;
+    width: 100%; /* 填滿上面的 container */
+    padding: 12px 20px;
     font-size: 16px;
     border: 2px solid #ddd;
-    border-radius: 30px;
+    border-radius: 25px;
     outline: none;
-    transition: all 0.3s ease;
+    transition: border-color 0.3s;
+    /* 核心：確保 padding 不會撐破寬度 */
+    box-sizing: border-box; 
+}
+
+/* 3. 在 Media Query 中進行微調 */
+@media (max-width: 600px) {
+    .search-container {
+        width: 90%; /* 手機上左右各留一點邊距即可 */
+    }
+    
+    #searchInput {
+        font-size: 14px; /* 稍微縮小字體以符合手機比例 */
+        padding: 10px 15px;
+    }
 }
 
 #searchInput:focus {
