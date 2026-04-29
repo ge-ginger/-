@@ -1,3 +1,4 @@
+console.log("檔案讀取中..."); // 測試點 1
 let copypastaData = []; // 用來存放從 JSON 讀取回來的資料
 
 // 1. 初始化：當網頁載入後，去抓取 JSON 資料
@@ -7,23 +8,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // 2. 非同步抓取資料庫
 async function fetchData() {
+    console.log("1. 程式啟動，準備抓取資料...");
+    
     try {
-        // 讀取同資料夾下的 data.json
         const response = await fetch('data.json');
-        
-        if (!response.ok) {
-            throw new Error('無法讀取資料庫檔案');
-        }
-        
         copypastaData = await response.json();
-        
-        // 抓到資料後，第一次渲染網頁
-        displayPastas(copypastaData);
-    } catch (error) {
-        console.error('錯誤:', error);
-        document.getElementById('libraryGrid').innerHTML = 
-            `<div class="no-results">資料庫連線失敗，請檢查 data.json 是否存在。</div>`;
+        displayPastas(copypastaData, false);
+    } catch (e) {
+        console.error(e);
     }
+}
+
+function displayPastas(data, isSearching) {
+    console.log("正在渲染，資料長度:", data.length); // 測試點 3
+    document.getElementById('pastaCount').innerText = data.length;
+    // ... 剩下的 code
+
+    
 }
 
 // 3. 渲染卡片 (保持不變)
@@ -73,8 +74,15 @@ function displayPastas(data) {
 }
 
 // 4. 搜尋功能
+// 修改後的搜尋函數
 function searchCopypasta() {
-    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    const searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
+    
+    // 如果搜尋框是空的，直接顯示全部資料
+    if (searchTerm === "") {
+        displayPastas(copypastaData, false);
+        return;
+    }
     
     const filteredResults = copypastaData.filter(item => {
         return (
@@ -84,9 +92,47 @@ function searchCopypasta() {
         );
     });
 
-    displayPastas(filteredResults);
+    // 顯示過濾後的結果，並標記為「搜尋中」
+    displayPastas(filteredResults, true);
 }
 
+// 修改後的顯示函數
+function displayPastas(data, isSearching = false) {
+    // 【關鍵修改 1】優先更新數字
+    const countNumberElement = document.getElementById('pastaCount');
+    const countTypeElement = document.getElementById('countType');
+
+    if (countNumberElement) {
+      countNum.innerText = data.length;
+    }
+    
+    if (countTypeElement) {
+        countTypeElement.innerText = isSearching ? "搜尋結果" : "全部";
+    }
+
+    // 【關鍵修改 2】清空與渲染
+    const grid = document.getElementById('libraryGrid');
+    if (grid) {
+        grid.innerHTML = '';
+        }
+    
+    if (!data || data.length === 0) {
+        grid.innerHTML = '<div class="no-results">查無相關內容...</div>';
+        return;
+    }
+
+    // 渲染卡片邏輯 (確保這段沒有語法錯誤導致執行中斷)
+    data.forEach(item => {
+        try {
+            const card = document.createElement('div');
+            card.className = 'card';
+            // ... 你之前的卡片建立代碼 ...
+            grid.appendChild(card);
+        } catch (e) {
+            console.error("渲染單個卡片時出錯:", e);
+        }
+    });
+}
 // 5. 複製功能
 function copyToClipboard(text, event) {
     navigator.clipboard.writeText(text).then(() => {
@@ -176,3 +222,7 @@ window.onclick = function(event) {
         closeModal();
     }
 }
+window.onload = () => {
+    fetchData();
+};
+fetchData();

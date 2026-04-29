@@ -90,7 +90,6 @@ h1 { color: var(--primary-color); margin-bottom: 20px; }
         font-size: 0.9rem;
         /* 避免標題太長衝破卡片 */
         display: -webkit-box;
-        -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
         overflow: hidden;
     }
@@ -282,11 +281,20 @@ h1 { color: var(--primary-color); margin-bottom: 20px; }
 }
 
 .sub-count {
-    font-size: 0.4em; /* 縮小字體 */
-    color: #888;     /* 灰色字體 */
-    font-weight: normal;
-    background: #eee;
-    padding: 2px 8px;
-    border-radius: 12px;
-    vertical-align: middle;
+    font-size: 0.45em;
+    color: #666;
+    background: #f0f0f0;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-weight: 500;
+    margin-left: 10px;
+    border: 1px solid #ddd;
+    display: inline-flex;
+    align-items: center;
+}
+
+#pastaCount {
+    font-weight: bold;
+    margin: 0 3px;
+    color: #3498db; /* 讓數字稍微突出 */
 }
