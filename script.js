@@ -91,11 +91,13 @@ function displayPastas(data) {
         const card = document.createElement('div');
         card.className = 'card';
         // 點擊卡片本體（非按鈕）時放大檢視
+        // ... 在渲染迴圈內
         card.onclick = (e) => {
-            if (e.target.tagName !== 'BUTTON') {
-                openModal(item.title, item.content);
-            }
-        };
+        if (e.target.tagName !== 'BUTTON') {
+        // 多傳入 item.tags
+        openModal(item.title, item.content, item.tags);
+    }
+};
 
         card.innerHTML = `
             <div class="card-title">${item.title}</div>
@@ -112,11 +114,20 @@ function displayPastas(data) {
 }
 
 // 彈窗控制邏輯
-function openModal(title, content) {
+function openModal(title, content, tags) {
     document.getElementById('modalTitle').innerText = title;
     document.getElementById('modalBody').innerText = content;
+    
+    // 處理標籤顯示
+    const modalTagsContainer = document.getElementById('modalTags');
+    if (tags && tags.length > 0) {
+        modalTagsContainer.innerHTML = tags.map(tag => `<span class="tag">#${tag}</span>`).join('');
+        modalTagsContainer.style.display = 'flex';
+    } else {
+        modalTagsContainer.style.display = 'none';
+    }
+
     document.getElementById('copyModal').style.display = 'flex';
-    // 防止背景捲動
     document.body.style.overflow = 'hidden';
 }
 

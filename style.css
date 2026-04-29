@@ -211,6 +211,11 @@ h1 { color: var(--primary-color); margin-bottom: 20px; }
     white-space: pre-wrap;
     color: #333;
 }
+/* 讓彈窗內的標籤可以完整顯示，不限制寬度 */
+#modalTags .tag {
+    max-width: none; 
+    white-space: normal;
+}
 
 .close-btn {
     position: absolute;
