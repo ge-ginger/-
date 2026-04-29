@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>📚 複製文圖書館</title>
     <link rel="stylesheet" href="style.css">
+    
 </head>
 <div id="copyModal" class="modal">
     <div class="modal-content">
@@ -17,7 +18,10 @@
 </div>
 <body>
 
-    <h1>📚 複製文圖書館</h1>
+    <h1 class="main-title">
+    📚 複製文圖書館 
+    <span id="pastaCount" class="sub-count">0</span>
+    </h1>
     
     <div class="search-container">
         <input type="text" id="searchInput" placeholder="搜尋標題、內容或標籤..." onkeyup="searchCopypasta()">

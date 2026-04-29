@@ -28,9 +28,16 @@ async function fetchData() {
 
 // 3. 渲染卡片 (保持不變)
 function displayPastas(data) {
+    // 更新標題旁邊的總數顯示
+    const countElement = document.getElementById('pastaCount');
+    if (countElement) {
+        countElement.innerText = `${data.length} 則`;
+    }
+
     const grid = document.getElementById('libraryGrid');
     grid.innerHTML = '';
-
+    
+    // ... 原本渲染卡片的程式碼 ...
     data.forEach(item => {
         const card = document.createElement('div');
         card.className = 'card';
