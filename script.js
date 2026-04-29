@@ -82,3 +82,53 @@ function copyToClipboard(text, event) {
         }, 1500);
     });
 }
+// 修改渲染卡片的迴圈部分
+function displayPastas(data) {
+    const grid = document.getElementById('libraryGrid');
+    grid.innerHTML = '';
+
+    data.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        // 點擊卡片本體（非按鈕）時放大檢視
+        card.onclick = (e) => {
+            if (e.target.tagName !== 'BUTTON') {
+                openModal(item.title, item.content);
+            }
+        };
+
+        card.innerHTML = `
+            <div class="card-title">${item.title}</div>
+            <div class="card-content">${item.content}</div>
+            <div class="card-tags">
+                ${item.tags.map(tag => `<span class="tag">#${tag}</span>`).join('')}
+            </div>
+            <div class="card-footer">
+                <button class="copy-btn" onclick="copyToClipboard(\`${item.content.replace(/`/g, '\\`').replace(/\$/g, '\\$')}\`, event)">複製內容</button>
+            </div>
+        `;
+        grid.appendChild(card);
+    });
+}
+
+// 彈窗控制邏輯
+function openModal(title, content) {
+    document.getElementById('modalTitle').innerText = title;
+    document.getElementById('modalBody').innerText = content;
+    document.getElementById('copyModal').style.display = 'flex';
+    // 防止背景捲動
+    document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+    document.getElementById('copyModal').style.display = 'none';
+    document.body.style.overflow = 'auto';
+}
+
+// 點擊彈窗外部也可關閉
+window.onclick = function(event) {
+    const modal = document.getElementById('copyModal');
+    if (event.target == modal) {
+        closeModal();
+    }
+}
