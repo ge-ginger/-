@@ -134,13 +134,13 @@ function openModal(title, content, tags) {
     if (modalTitle) modalTitle.innerText = title;
     if (modalBody) modalBody.innerText = content;
 
+    // 處理展開後的標籤
     if (modalTags) {
-        // 清空舊標籤並加入新標籤
-        modalTags.innerHTML = ''; 
+        modalTags.innerHTML = ''; // 先清空舊的
         if (tags && tags.length > 0) {
             tags.forEach(t => {
                 const span = document.createElement('span');
-                span.className = 'tag';
+                span.className = 'tag'; // 這會套用我們上面寫的 #modalTags .tag 樣式
                 span.innerText = `#${t}`;
                 modalTags.appendChild(span);
             });
@@ -150,8 +150,11 @@ function openModal(title, content, tags) {
         }
     }
 
-    document.getElementById('copyModal').style.display = 'flex';
-    document.body.style.overflow = 'hidden';
+    const modal = document.getElementById('copyModal');
+    if (modal) {
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden'; // 禁止背景捲動
+    }
 }
 
 function closeModal() {

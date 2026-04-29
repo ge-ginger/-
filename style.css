@@ -251,11 +251,23 @@ h1 { color: var(--primary-color); margin-bottom: 20px; }
     color: #333;
 }
 /* 讓彈窗內的標籤可以完整顯示，不限制寬度 */
-#modalTags .tag {
-    max-width: none; 
-    white-space: normal;
+#modalTags {
+    display: flex;
+    flex-wrap: wrap;    /* 關鍵：允許自動換行 */
+    gap: 8px;           /* 加大間距 */
+    margin-bottom: 20px;
+    width: 100%;
 }
 
+#modalTags .tag {
+    max-width: none;    /* 取消寬度限制 */
+    white-space: nowrap;/* 確保個別標籤內容不被切斷 */
+    background: #e1f5fe;
+    color: #039be5;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+}
 .close-btn {
     position: absolute;
     top: 10px; right: 15px;
