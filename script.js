@@ -1,5 +1,7 @@
-console.log("檔案讀取中..."); // 測試點 1
-let copypastaData = []; // 用來存放從 JSON 讀取回來的資料
+// script.js 完整修正版
+console.log("檔案讀取中..."); 
+
+let copypastaData = []; 
 
 // 1. 初始化：當網頁載入後，去抓取 JSON 資料
 document.addEventListener('DOMContentLoaded', () => {
@@ -9,48 +11,57 @@ document.addEventListener('DOMContentLoaded', () => {
 // 2. 非同步抓取資料庫
 async function fetchData() {
     console.log("1. 程式啟動，準備抓取資料...");
-    
     try {
         const response = await fetch('data.json');
+        if (!response.ok) throw new Error("找不到 data.json");
         copypastaData = await response.json();
+        console.log("2. 資料載入成功，共", copypastaData.length, "筆");
+        // 初始化顯示全部資料
         displayPastas(copypastaData, false);
     } catch (e) {
-        console.error(e);
+        console.error("載入失敗:", e);
+        const countNum = document.getElementById('pastaCount');
+        if (countNum) countNum.innerText = "ERR";
     }
 }
 
-function displayPastas(data, isSearching) {
-    console.log("正在渲染，資料長度:", data.length); // 測試點 3
-    document.getElementById('pastaCount').innerText = data.length;
-    // ... 剩下的 code
+// 3. 統一的顯示與渲染函數 (合併後的唯一版本)
+function displayPastas(data, isSearching = false) {
+    console.log("正在渲染，資料長度:", data.length, "是否搜尋:", isSearching);
 
-    
-}
-
-// 3. 渲染卡片 (保持不變)
-function displayPastas(data) {
     // 更新標題旁邊的總數顯示
-    const countElement = document.getElementById('pastaCount');
-    if (countElement) {
-        countElement.innerText = `${data.length} 則`;
+    const countNum = document.getElementById('pastaCount');
+    const countType = document.getElementById('countType');
+
+    if (countNum) {
+        countNum.innerText = data.length;
+    }
+    if (countType) {
+        countType.innerText = isSearching ? "搜尋結果" : "當前全部";
     }
 
     const grid = document.getElementById('libraryGrid');
+    if (!grid) return;
     grid.innerHTML = '';
     
-    // ... 原本渲染卡片的程式碼 ...
+    if (data.length === 0) {
+        grid.innerHTML = '<div class="no-results">查無相關內容... (´;ω;`)</div>';
+        return;
+    }
+
+    // 渲染卡片
     data.forEach(item => {
         const card = document.createElement('div');
         card.className = 'card';
         
-        // 點擊卡片開啟彈窗 (傳入完整的 item.tags)
+        // 點擊卡片開啟彈窗 (確保傳入 tags)
         card.onclick = (e) => {
             if (e.target.tagName !== 'BUTTON') {
                 openModal(item.title, item.content, item.tags);
             }
         };
 
-        // 建立內部結構
+        // 使用我們之前討論過的 Flex 佈局結構
         card.innerHTML = `
             <div class="card-title">${item.title}</div>
             <div class="card-content">${item.content}</div>
@@ -62,10 +73,10 @@ function displayPastas(data) {
             </div>
         `;
 
-        // 獨立綁定按鈕點擊事件，避免轉義字元問題
+        // 綁定複製按鈕事件
         const btn = card.querySelector('.copy-btn');
         btn.onclick = (e) => {
-            e.stopPropagation(); // 阻止觸發卡片彈窗
+            e.stopPropagation(); // 阻止觸發彈窗
             copyToClipboard(item.content, e);
         };
 
@@ -74,16 +85,14 @@ function displayPastas(data) {
 }
 
 // 4. 搜尋功能
-// 修改後的搜尋函數
 function searchCopypasta() {
     const searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
     
-    // 如果搜尋框是空的，直接顯示全部資料
     if (searchTerm === "") {
         displayPastas(copypastaData, false);
         return;
     }
-    
+
     const filteredResults = copypastaData.filter(item => {
         return (
             item.title.toLowerCase().includes(searchTerm) ||
@@ -92,47 +101,9 @@ function searchCopypasta() {
         );
     });
 
-    // 顯示過濾後的結果，並標記為「搜尋中」
     displayPastas(filteredResults, true);
 }
 
-// 修改後的顯示函數
-function displayPastas(data, isSearching = false) {
-    // 【關鍵修改 1】優先更新數字
-    const countNumberElement = document.getElementById('pastaCount');
-    const countTypeElement = document.getElementById('countType');
-
-    if (countNumberElement) {
-      countNum.innerText = data.length;
-    }
-    
-    if (countTypeElement) {
-        countTypeElement.innerText = isSearching ? "搜尋結果" : "全部";
-    }
-
-    // 【關鍵修改 2】清空與渲染
-    const grid = document.getElementById('libraryGrid');
-    if (grid) {
-        grid.innerHTML = '';
-        }
-    
-    if (!data || data.length === 0) {
-        grid.innerHTML = '<div class="no-results">查無相關內容...</div>';
-        return;
-    }
-
-    // 渲染卡片邏輯 (確保這段沒有語法錯誤導致執行中斷)
-    data.forEach(item => {
-        try {
-            const card = document.createElement('div');
-            card.className = 'card';
-            // ... 你之前的卡片建立代碼 ...
-            grid.appendChild(card);
-        } catch (e) {
-            console.error("渲染單個卡片時出錯:", e);
-        }
-    });
-}
 // 5. 複製功能
 function copyToClipboard(text, event) {
     navigator.clipboard.writeText(text).then(() => {
@@ -147,38 +118,8 @@ function copyToClipboard(text, event) {
         }, 1500);
     });
 }
-// 修改渲染卡片的迴圈部分
-function displayPastas(data) {
-    const grid = document.getElementById('libraryGrid');
-    grid.innerHTML = '';
 
-    data.forEach(item => {
-        const card = document.createElement('div');
-        card.className = 'card';
-        // 點擊卡片本體（非按鈕）時放大檢視
-        // ... 在渲染迴圈內
-        card.onclick = (e) => {
-        if (e.target.tagName !== 'BUTTON') {
-        // 多傳入 item.tags
-        openModal(item.title, item.content, item.tags);
-    }
-};
-
-        card.innerHTML = `
-            <div class="card-title">${item.title}</div>
-            <div class="card-content">${item.content}</div>
-            <div class="card-tags">
-                ${item.tags.map(tag => `<span class="tag">#${tag}</span>`).join('')}
-            </div>
-            <div class="card-footer">
-                <button class="copy-btn" onclick="copyToClipboard(\`${item.content.replace(/`/g, '\\`').replace(/\$/g, '\\$')}\`, event)">複製內容</button>
-            </div>
-        `;
-        grid.appendChild(card);
-    });
-}
-
-// 彈窗控制邏輯
+// 6. 彈窗控制邏輯
 function openModal(title, content, tags) {
     const modalTitle = document.getElementById('modalTitle');
     const modalBody = document.getElementById('modalBody');
@@ -187,13 +128,12 @@ function openModal(title, content, tags) {
     if (modalTitle) modalTitle.innerText = title;
     if (modalBody) modalBody.innerText = content;
 
-    // 處理展開後的標籤
     if (modalTags) {
-        modalTags.innerHTML = ''; // 先清空舊的
+        modalTags.innerHTML = ''; 
         if (tags && tags.length > 0) {
             tags.forEach(t => {
                 const span = document.createElement('span');
-                span.className = 'tag'; // 這會套用我們上面寫的 #modalTags .tag 樣式
+                span.className = 'tag';
                 span.innerText = `#${t}`;
                 modalTags.appendChild(span);
             });
@@ -206,7 +146,7 @@ function openModal(title, content, tags) {
     const modal = document.getElementById('copyModal');
     if (modal) {
         modal.style.display = 'flex';
-        document.body.style.overflow = 'hidden'; // 禁止背景捲動
+        document.body.style.overflow = 'hidden';
     }
 }
 
@@ -215,14 +155,10 @@ function closeModal() {
     document.body.style.overflow = 'auto';
 }
 
-// 點擊彈窗外部也可關閉
+// 點擊彈窗外部關閉
 window.onclick = function(event) {
     const modal = document.getElementById('copyModal');
     if (event.target == modal) {
         closeModal();
     }
-}
-window.onload = () => {
-    fetchData();
 };
-fetchData();
