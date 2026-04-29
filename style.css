@@ -4,8 +4,12 @@
     --accent-color: #3498db;
     --bg-color: #f4f7f6;
     --card-bg: #ffffff;
+    --text-color: #2c3e50;
     --tag-bg: #e1f5fe;
     --tag-text: #039be5;
+    --count-bg: #eeeeee;  /* 數量背景 */
+    --input-bg: #ffffff;  /* 輸入框背景 */
+    --border-color: #dddddd;
     
 
 }
@@ -312,13 +316,13 @@ h1 { color: var(--primary-color); margin-bottom: 20px; }
 
 .sub-count {
     font-size: 0.45em;
-    color: var(--sub-text);
+    color: var(--sub-text);      
     background: var(--count-bg);
     padding: 3px 10px;
     border-radius: 20px;
     font-weight: 500;
     margin-left: 10px;
-    border: 1px solid #ddd;
+    border: 1px solid var(--border-color);
     display: inline-flex;
     align-items: center;
     border: 1px solid var(--border-color);
@@ -327,7 +331,7 @@ h1 { color: var(--primary-color); margin-bottom: 20px; }
 #pastaCount {
     font-weight: bold;
     margin: 0 3px;
-    color: #3498; /* 讓數字稍微突出 */
+    color: var(--tag-text);
 }
 /* 深色模式變數設定 */
 :root {
@@ -380,6 +384,7 @@ body { background-color: var(--bg-color); color: var(--text-color); transition: 
     color: var(--text-color);
     cursor: pointer;
     font-size: 13px;
+    transition: all 0.3s;
 }
 
 /* 標籤篩選器懸浮視窗 */
