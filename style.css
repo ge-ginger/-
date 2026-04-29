@@ -44,11 +44,12 @@ h1 { color: var(--primary-color); margin-bottom: 20px; }
 
 /* 1. 容器在手機上應橫跨較大的比例 */
 .search-container {
-    width: 95%; /* 手機端佔據 95% 的寬度 */
-    max-width: 600px; /* 電腦版最大限制在 600px */
-    margin: 10px auto 20px auto; /* 上下邊距調整，auto 確保水平居中 */
+    width: 95%;
+    max-width: 600px;
+    margin: 10px auto 25px auto;
     display: flex;
-    justify-content: center;
+    flex-direction: column; /* 讓內容上下排列 */
+    gap: 12px; /* 搜尋框與按鈕之間的間距 */
 }
 
 /* 2. 搜尋輸入框設定 */
@@ -309,9 +310,26 @@ h1 { color: var(--primary-color); margin-bottom: 20px; }
 }
 .main-title {
     display: flex;
-    align-items: baseline; /* 讓大字小字底部對齊 */
-    gap: 10px;
-    color: var(--accent-color) !important;
+    flex-wrap: nowrap; /* 核心：強制不換行 */
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    white-space: nowrap; /* 防止文字溢出換行 */
+}
+
+@media (max-width: 600px) {
+    .main-title {
+        font-size: 1.25rem; /* 手機端縮小標題字體 */
+    }
+    .sub-count {
+        font-size: 0.35em; /* 數量標籤同步縮小 */
+        padding: 2px 6px;
+        margin-left: 5px;
+    }
+    .icon-btn {
+        font-size: 18px; /* 月亮按鈕也稍微縮小 */
+    }
 }
 
 .sub-count {
@@ -370,20 +388,19 @@ body { background-color: var(--bg-color); color: var(--text-color); transition: 
 /* 功能按鈕樣式 */
 .action-buttons {
     display: flex;
-    gap: 10px;
-    margin-top: 10px;
     width: 100%;
+    gap: 10px; /* 兩個按鈕之間的間距 */
 }
 
 .action-btn {
-    flex: 1;
-    padding: 8px;
+    flex: 1; /* 讓兩個按鈕平分寬度 */
+    padding: 12px;
     border: 1px solid var(--border-color);
-    border-radius: 8px;
+    border-radius: 12px;
     background: var(--card-bg);
     color: var(--text-color);
+    font-weight: bold;
     cursor: pointer;
-    font-size: 13px;
     transition: all 0.3s;
 }
 
