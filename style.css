@@ -95,11 +95,15 @@ h1 { color: var(--primary-color); margin-bottom: 20px; }
         overflow: hidden;
     }
 
-    .card-content {
-        font-size: 13px;
-        height: 80px; /* 固定高度讓排版整齊 */
-        overflow-y: auto;
-    }
+    /* 讓中間的內容區自動伸展，把後面的標籤與按鈕推到底部 */
+.card-content {
+    flex-grow: 1; 
+    margin-bottom: 10px;
+    font-size: 14px;
+    line-height: 1.5;
+    height: 80px;
+    overflow-y: auto; /* 內容太長時內部捲動 */
+}
 
     .card-footer {
         flex-direction: column; /* 腳部改為垂直排列 */
@@ -145,6 +149,7 @@ h1 { color: var(--primary-color); margin-bottom: 20px; }
     font-size: 14px;
     color: #444;
     line-height: 1.6;
+    flex-grow: 1;
     margin-bottom: 15px;
     white-space: pre-wrap;
     max-height: 150px;

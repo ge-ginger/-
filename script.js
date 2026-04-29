@@ -31,24 +31,36 @@ function displayPastas(data) {
     const grid = document.getElementById('libraryGrid');
     grid.innerHTML = '';
 
-    if (data.length === 0) {
-        grid.innerHTML = '<div class="no-results">查無相關複製文... (´;ω;`)</div>';
-        return;
-    }
-
     data.forEach(item => {
         const card = document.createElement('div');
         card.className = 'card';
+        
+        // 點擊卡片開啟彈窗 (傳入完整的 item.tags)
+        card.onclick = (e) => {
+            if (e.target.tagName !== 'BUTTON') {
+                openModal(item.title, item.content, item.tags);
+            }
+        };
+
+        // 建立內部結構
         card.innerHTML = `
             <div class="card-title">${item.title}</div>
             <div class="card-content">${item.content}</div>
+            <div class="card-tags">
+                ${(item.tags || []).map(t => `<span class="tag">#${t}</span>`).join('')}
+            </div>
             <div class="card-footer">
-                <div>
-                    ${item.tags.map(tag => `<span class="tag">#${tag}</span>`).join('')}
-                </div>
-                <button class="copy-btn" onclick="copyToClipboard(\`${item.content.replace(/`/g, '\\`').replace(/\$/g, '\\$')}\`, event)">複製</button>
+                <button class="copy-btn">複製內容</button>
             </div>
         `;
+
+        // 獨立綁定按鈕點擊事件，避免轉義字元問題
+        const btn = card.querySelector('.copy-btn');
+        btn.onclick = (e) => {
+            e.stopPropagation(); // 阻止觸發卡片彈窗
+            copyToClipboard(item.content, e);
+        };
+
         grid.appendChild(card);
     });
 }
