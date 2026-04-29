@@ -16,6 +16,15 @@
         <div id="modalBody" class="modal-body"></div>
     </div>
 </div>
+<div id="tagPicker" class="tag-picker">
+    <div class="tag-picker-content">
+        <div class="tag-picker-header">
+            <span>選擇分類標籤</span>
+            <span class="close-tag-btn" onclick="hideTagFilter()">&times;</span>
+        </div>
+        <div id="tagCloud" class="tag-cloud"></div>
+    </div>
+</div>
 <body>
 
     <h1 class="main-title">
@@ -24,14 +33,18 @@
      <span id="countType">當前</span>
      <span id="pastaCount">--</span> 則
     </span>
+    <button id="themeToggle" class="icon-btn" onclick="toggleTheme()">🌙</button>
     </h1>
     
     <div class="search-container">
-        <input type="text" id="searchInput" placeholder="搜尋標題、內容或標籤..." onkeyup="searchCopypasta()">
+    <input type="text" id="searchInput" placeholder="搜尋標題、內容或標籤..." onkeyup="searchCopypasta()">
+    <div class="action-buttons">
+        <button class="action-btn" onclick="getRandomPasta()">🎲 隨機抽一則</button>
+        <button class="action-btn" onclick="showTagFilter()">🏷️ 標籤篩選</button>
     </div>
+</div>
 
-    <div class="library-grid" id="libraryGrid">
-        </div>
+<div class="library-grid" id="libraryGrid"></div>
 
     <script src="script.js" ></script>
 </body>

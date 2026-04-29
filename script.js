@@ -162,3 +162,70 @@ window.onclick = function(event) {
         closeModal();
     }
 };
+// --- 功能 1: 隨機抽一則 ---
+function getRandomPasta() {
+    if (copypastaData.length === 0) return;
+    const randomIndex = Math.floor(Math.random() * copypastaData.length);
+    const item = copypastaData[randomIndex];
+    openModal(item.title, item.content, item.tags);
+}
+
+// --- 功能 2: 標籤篩選 ---
+function showTagFilter() {
+    const tagPicker = document.getElementById('tagPicker');
+    const tagCloud = document.getElementById('tagCloud');
+    
+    // 提取所有不重複的標籤
+    let allTags = new Set();
+    copypastaData.forEach(item => {
+        if (item.tags) item.tags.forEach(t => allTags.add(t));
+    });
+
+    tagCloud.innerHTML = '<span class="tag" onclick="filterByTag(\'\')">顯示全部</span>';
+    allTags.forEach(tag => {
+        const span = document.createElement('span');
+        span.className = 'tag';
+        span.innerText = `#${tag}`;
+        span.onclick = () => filterByTag(tag);
+        tagCloud.appendChild(span);
+    });
+
+    tagPicker.style.display = 'flex';
+}
+
+function filterByTag(tag) {
+    hideTagFilter();
+    if (tag === '') {
+        displayPastas(copypastaData, false);
+        return;
+    }
+    const filtered = copypastaData.filter(item => item.tags && item.tags.includes(tag));
+    displayPastas(filtered, true);
+    // 更新標題為標籤名稱
+    document.getElementById('countType').innerText = `標籤: ${tag}`;
+}
+
+function hideTagFilter() {
+    document.getElementById('tagPicker').style.display = 'none';
+}
+
+// --- 功能 3: 深色模式切換 ---
+function toggleTheme() {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    
+    document.documentElement.setAttribute('data-theme', newTheme);
+    document.getElementById('themeToggle').innerText = newTheme === 'dark' ? '☀️' : '🌙';
+    
+    // 儲存設定到瀏覽器
+    localStorage.setItem('theme', newTheme);
+}
+
+// 頁面載入時檢查深色模式設定
+document.addEventListener('DOMContentLoaded', () => {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        document.getElementById('themeToggle').innerText = '☀️';
+    }
+});
