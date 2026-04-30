@@ -142,6 +142,13 @@ function openModal(title, content, tags) {
             modalTags.style.display = 'none';
         }
     }
+    const modalCopyBtn = document.getElementById('modalCopyBtn');
+    if (modalCopyBtn) {
+        // 每次打開彈窗時，更新按鈕要複製的內容
+        modalCopyBtn.onclick = (e) => {
+            copyToClipboard(content, e);
+        };
+    }
 
     const modal = document.getElementById('copyModal');
     if (modal) {

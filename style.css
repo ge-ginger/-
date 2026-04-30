@@ -433,3 +433,21 @@ body { background-color: var(--bg-color); color: var(--text-color); transition: 
 .icon-btn {
     background: none; border: none; font-size: 20px; cursor: pointer; margin-left: 10px;
 }
+/* 彈窗底部的按鈕區塊 */
+.modal-footer {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid var(--border-color); /* 加一條分隔線更有質感 */
+    display: flex;
+    justify-content: flex-end; /* 讓按鈕靠右對齊 */
+}
+
+/* 確保彈窗內的按鈕在手機上也是滿版或適當大小 */
+@media (max-width: 600px) {
+    .modal-footer .copy-btn {
+        width: 100%; /* 手機版讓按鈕變成一整條，更好按 */
+        padding: 12px 0;
+        font-size: 14px;
+        font-weight: bold;
+    }
+}
