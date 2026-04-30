@@ -417,17 +417,36 @@ body { background-color: var(--bg-color); color: var(--text-color); transition: 
 
 .tag-picker-content {
     background: var(--card-bg);
-    padding: 20px;
+    padding: 25px; /* 增加內邊距 */
     border-radius: 15px;
-    width: 85%;
-    max-width: 400px;
+    width: 90%; 
+    max-width: 600px; /* 從 400px 放大到 600px */
+    max-height: 80vh; /* 避免標籤太多超出螢幕 */
+    overflow-y: auto; /* 標籤太多時可以上下滑動 */
+    border: 1px solid var(--border-color);
 }
 
 .tag-cloud {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: 12px; /* 標籤之間的距離拉大 */
     margin-top: 15px;
+}
+
+#tagCloud .tag {
+    padding: 10px 16px; /* 讓上下左右變寬，增加觸控面積 */
+    font-size: 14px; /* 字體稍微放大 */
+    cursor: pointer;
+    border-radius: 8px; /* 圓角調整得更像按鈕 */
+    max-width: none; /* 解除最大寬度限制，讓標籤完整顯示 */
+    user-select: none; /* 防止連點時不小心反白文字 */
+    transition: all 0.2s;
+}
+
+/* 增加點擊時的視覺回饋 */
+#tagCloud .tag:active {
+    transform: scale(0.95);
+    opacity: 0.8;
 }
 
 .icon-btn {

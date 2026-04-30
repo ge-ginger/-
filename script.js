@@ -178,21 +178,33 @@ function getRandomPasta() {
 }
 
 // --- 功能 2: 標籤篩選 ---
+// --- 功能 2: 標籤篩選 (升級版：計算數量並排序) ---
 function showTagFilter() {
     const tagPicker = document.getElementById('tagPicker');
     const tagCloud = document.getElementById('tagCloud');
     
-    // 提取所有不重複的標籤
-    let allTags = new Set();
+    // 1. 統計每個標籤出現的次數
+    let tagCounts = {};
     copypastaData.forEach(item => {
-        if (item.tags) item.tags.forEach(t => allTags.add(t));
+        if (item.tags) {
+            item.tags.forEach(t => {
+                tagCounts[t] = (tagCounts[t] || 0) + 1;
+            });
+        }
     });
 
+    // 2. 將統計結果轉為陣列，並依照數量「由大到小」排序
+    // 結果會變成類似這樣：[['copypasta', 25], ['學測', 10], ...]
+    let sortedTags = Object.entries(tagCounts).sort((a, b) => b[1] - a[1]);
+
+    // 3. 渲染到畫面上
     tagCloud.innerHTML = '<span class="tag" onclick="filterByTag(\'\')">顯示全部</span>';
-    allTags.forEach(tag => {
+    
+    sortedTags.forEach(([tag, count]) => {
         const span = document.createElement('span');
         span.className = 'tag';
-        span.innerText = `#${tag}`;
+        // 順便把數量顯示出來，讓使用者知道這個標籤有幾篇文章！
+        span.innerText = `#${tag} (${count})`; 
         span.onclick = () => filterByTag(tag);
         tagCloud.appendChild(span);
     });
