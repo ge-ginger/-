@@ -1,5 +1,6 @@
 
 :root {
+    --main-color:#3d3d3d;
     --primary-color: #2c3e50;
     --accent-color: #3498db;
     --bg-color: #f4f7f6;
@@ -14,6 +15,7 @@
 
 }
 [data-theme="dark"] {
+    --main-color:#d1d1d1;
     --bg-color: #1a1a1b;
     --card-bg: #2d2d2e;
     --text-color: #e1e1e1;
@@ -313,6 +315,7 @@ h1 { color: var(--primary-color); margin-bottom: 20px; }
     flex-wrap: nowrap; /* 核心：強制不換行 */
     align-items: center;
     justify-content: center;
+    color: var(--main-color);
     gap: 8px;
     width: 100%;
     white-space: nowrap; /* 防止文字溢出換行 */
@@ -321,6 +324,7 @@ h1 { color: var(--primary-color); margin-bottom: 20px; }
 @media (max-width: 600px) {
     .main-title {
         font-size: 1.25rem; /* 手機端縮小標題字體 */
+        color: var(--main-color);
     }
     .sub-count {
         font-size: 0.35em; /* 數量標籤同步縮小 */
@@ -468,5 +472,20 @@ body { background-color: var(--bg-color); color: var(--text-color); transition: 
         padding: 12px 0;
         font-size: 14px;
         font-weight: bold;
+    }
+}
+/* 首頁小字公告區塊 */
+.site-notice {
+    width: 100%;
+    font-size: 13px; /* 字體稍微縮小 */
+    color: var(--sub-text); /* 使用變數，深色模式會自動變成淺灰色 */
+    margin-bottom: 8px; /* 和下方的搜尋框保持一點舒適的距離 */
+    text-align: center; /* 文字置中 (如果想靠左對齊，可以改成 left，並加上 padding-left: 10px;) */
+    line-height: 1.4;
+}
+
+@media (max-width: 600px) {
+    .site-notice {
+        font-size: 12px; /* 手機版再稍微縮小一點點，看起來更精緻 */
     }
 }
