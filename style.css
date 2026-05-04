@@ -470,3 +470,17 @@ body { background-color: var(--bg-color); color: var(--text-color); transition: 
         font-weight: bold;
     }
 }
+.site-notice {
+    width: 100%;
+    font-size: 13px; /* 字體稍微縮小 */
+    color: var(--sub-text); /* 使用變數，深色模式會自動變成淺灰色 */
+    margin-bottom: 8px; /* 和下方的搜尋框保持一點舒適的距離 */
+    text-align: center; /* 文字置中 (如果想靠左對齊，可以改成 left，並加上 padding-left: 10px;) */
+    line-height: 1.4;
+}
+
+@media (max-width: 600px) {
+    .site-notice {
+        font-size: 12px; /* 手機版再稍微縮小一點點，看起來更精緻 */
+    }
+}
