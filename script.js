@@ -2,6 +2,7 @@
 console.log("檔案讀取中..."); 
 
 let copypastaData = []; 
+let sortedTagsList = []; // 全域保存計算與排序後的標籤清單
 
 // 1. 初始化：當網頁載入後，去抓取 JSON 資料
 document.addEventListener('DOMContentLoaded', () => {
@@ -16,8 +17,10 @@ async function fetchData() {
         if (!response.ok) throw new Error("找不到 data.json");
         copypastaData = await response.json();
         console.log("2. 資料載入成功，共", copypastaData.length, "筆");
-        // 初始化顯示全部資料
-        displayPastas(copypastaData, false);
+        
+        // 【安全機制】預設過濾掉含有 nsfw 標籤的文章
+        const safeData = copypastaData.filter(item => !item.tags || !item.tags.includes('nsfw'));
+        displayPastas(safeData, false);
     } catch (e) {
         console.error("載入失敗:", e);
         const countNum = document.getElementById('pastaCount');
@@ -25,11 +28,10 @@ async function fetchData() {
     }
 }
 
-// 3. 統一的顯示與渲染函數 (合併後的唯一版本)
+// 3. 統一的顯示與渲染函數
 function displayPastas(data, isSearching = false) {
     console.log("正在渲染，資料長度:", data.length, "是否搜尋:", isSearching);
 
-    // 更新標題旁邊的總數顯示
     const countNum = document.getElementById('pastaCount');
     const countType = document.getElementById('countType');
 
@@ -37,7 +39,12 @@ function displayPastas(data, isSearching = false) {
         countNum.innerText = data.length;
     }
     if (countType) {
-        countType.innerText = isSearching ? "搜尋結果" : "當前全部";
+        // 若非搜尋狀態且目前未顯示特定標籤，切換回「當前全部」
+        if (!isSearching && countType.innerText.indexOf('標籤') === -1) {
+            countType.innerText = "當前全部";
+        } else if (isSearching) {
+            countType.innerText = "搜尋結果";
+        }
     }
 
     const grid = document.getElementById('libraryGrid');
@@ -49,19 +56,16 @@ function displayPastas(data, isSearching = false) {
         return;
     }
 
-    // 渲染卡片
     data.forEach(item => {
         const card = document.createElement('div');
         card.className = 'card';
         
-        // 點擊卡片開啟彈窗 (確保傳入 tags)
         card.onclick = (e) => {
             if (e.target.tagName !== 'BUTTON') {
                 openModal(item.title, item.content, item.tags);
             }
         };
 
-        // 使用我們之前討論過的 Flex 佈局結構
         card.innerHTML = `
             <div class="card-title">${item.title}</div>
             <div class="card-content">${item.content}</div>
@@ -73,10 +77,9 @@ function displayPastas(data, isSearching = false) {
             </div>
         `;
 
-        // 綁定複製按鈕事件
         const btn = card.querySelector('.copy-btn');
         btn.onclick = (e) => {
-            e.stopPropagation(); // 阻止觸發彈窗
+            e.stopPropagation(); 
             copyToClipboard(item.content, e);
         };
 
@@ -84,20 +87,25 @@ function displayPastas(data, isSearching = false) {
     });
 }
 
-// 4. 搜尋功能
+// 4. 搜尋功能 (主搜尋框同樣預設排除 nsfw)
 function searchCopypasta() {
     const searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
     
+    // 基底資料排除 nsfw
+    const safeData = copypastaData.filter(item => !item.tags || !item.tags.includes('nsfw'));
+
     if (searchTerm === "") {
-        displayPastas(copypastaData, false);
+        displayPastas(safeData, false);
+        const countType = document.getElementById('countType');
+        if (countType) countType.innerText = "當前全部";
         return;
     }
 
-    const filteredResults = copypastaData.filter(item => {
+    const filteredResults = safeData.filter(item => {
         return (
             item.title.toLowerCase().includes(searchTerm) ||
             item.content.toLowerCase().includes(searchTerm) ||
-            item.tags.some(tag => tag.toLowerCase().includes(searchTerm))
+            (item.tags && item.tags.some(tag => tag.toLowerCase().includes(searchTerm)))
         );
     });
 
@@ -144,7 +152,6 @@ function openModal(title, content, tags) {
     }
     const modalCopyBtn = document.getElementById('modalCopyBtn');
     if (modalCopyBtn) {
-        // 每次打開彈窗時，更新按鈕要複製的內容
         modalCopyBtn.onclick = (e) => {
             copyToClipboard(content, e);
         };
@@ -158,32 +165,34 @@ function openModal(title, content, tags) {
 }
 
 function closeModal() {
-    document.getElementById('copyModal').style.display = 'none';
+    const modal = document.getElementById('copyModal');
+    if (modal) modal.style.display = 'none';
     document.body.style.overflow = 'auto';
 }
 
-// 點擊彈窗外部關閉
 window.onclick = function(event) {
     const modal = document.getElementById('copyModal');
     if (event.target == modal) {
         closeModal();
     }
 };
-// --- 功能 1: 隨機抽一則 ---
+
+// --- 功能 1: 隨機抽一則 (安全機制：排除 nsfw) ---
 function getRandomPasta() {
-    if (copypastaData.length === 0) return;
-    const randomIndex = Math.floor(Math.random() * copypastaData.length);
-    const item = copypastaData[randomIndex];
+    const safeData = copypastaData.filter(item => !item.tags || !item.tags.includes('nsfw'));
+    if (safeData.length === 0) return;
+    const randomIndex = Math.floor(Math.random() * safeData.length);
+    const item = safeData[randomIndex];
     openModal(item.title, item.content, item.tags);
 }
 
-// --- 功能 2: 標籤篩選 ---
-// --- 功能 2: 標籤篩選 (升級版：計算數量並排序) ---
+// --- 功能 2: 標籤篩選與即時搜尋 ---
 function showTagFilter() {
     const tagPicker = document.getElementById('tagPicker');
-    const tagCloud = document.getElementById('tagCloud');
-    
-    // 1. 統計每個標籤出現的次數
+    const tagSearchInput = document.getElementById('tagSearchInput');
+    if (tagSearchInput) tagSearchInput.value = ''; // 每次打開先清空搜尋框
+
+    // 統計每個標籤出現的次數
     let tagCounts = {};
     copypastaData.forEach(item => {
         if (item.tags) {
@@ -193,39 +202,66 @@ function showTagFilter() {
         }
     });
 
-    // 2. 將統計結果轉為陣列，並依照數量「由大到小」排序
-    // 結果會變成類似這樣：[['copypasta', 25], ['學測', 10], ...]
-    let sortedTags = Object.entries(tagCounts).sort((a, b) => b[1] - a[1]);
+    // 轉為陣列並依照數量由大到小排序 (同時帶有數量標示)
+    sortedTagsList = Object.entries(tagCounts).sort((a, b) => b[1] - a[1]);
 
-    // 3. 渲染到畫面上
-    tagCloud.innerHTML = '<span class="tag" onclick="filterByTag(\'\')">顯示全部</span>';
-    
-    sortedTags.forEach(([tag, count]) => {
-        const span = document.createElement('span');
-        span.className = 'tag';
-        // 順便把數量顯示出來，讓使用者知道這個標籤有幾篇文章！
-        span.innerText = `#${tag} (${count})`; 
-        span.onclick = () => filterByTag(tag);
-        tagCloud.appendChild(span);
-    });
+    // 渲染初始完整的標籤雲
+    renderTagCloud('');
 
-    tagPicker.style.display = 'flex';
+    if (tagPicker) tagPicker.style.display = 'flex';
 }
 
+// 動態渲染標籤雲
+function renderTagCloud(searchTerm = '') {
+    const tagCloud = document.getElementById('tagCloud');
+    if (!tagCloud) return;
+
+    tagCloud.innerHTML = '<span class="tag" onclick="filterByTag(\'\')">顯示全部</span>';
+
+    sortedTagsList.forEach(([tag, count]) => {
+        // 根據輸入框內容進行過濾比對
+        if (tag.toLowerCase().includes(searchTerm.toLowerCase())) {
+            const span = document.createElement('span');
+            span.className = 'tag';
+            span.innerText = `#${tag} (${count})`;
+            span.onclick = () => filterByTag(tag);
+            tagCloud.appendChild(span);
+        }
+    });
+}
+
+// 標籤輸入框觸發的搜尋事件
+function searchTags() {
+    const input = document.getElementById('tagSearchInput');
+    if (input) {
+        renderTagCloud(input.value.trim());
+    }
+}
+
+// 點擊標籤後的篩選行為
 function filterByTag(tag) {
     hideTagFilter();
+    const countType = document.getElementById('countType');
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) searchInput.value = ''; // 切換標籤時自動清空主搜尋框
+
     if (tag === '') {
-        displayPastas(copypastaData, false);
+        // 點選「顯示全部」回到預設安全模式 (不含 nsfw)
+        const safeData = copypastaData.filter(item => !item.tags || !item.tags.includes('nsfw'));
+        displayPastas(safeData, false);
+        if (countType) countType.innerText = "當前全部";
         return;
     }
+    
+    // 【解鎖機制】篩選出指定標籤（若使用者點選 nsfw 標籤，這時就會順利顯示出來）
     const filtered = copypastaData.filter(item => item.tags && item.tags.includes(tag));
-    displayPastas(filtered, true);
-    // 更新標題為標籤名稱
-    document.getElementById('countType').innerText = `標籤: ${tag}`;
+    if (countType) countType.innerText = `標籤: ${tag}`;
+    displayPastas(filtered, false);
 }
 
 function hideTagFilter() {
-    document.getElementById('tagPicker').style.display = 'none';
+    const tagPicker = document.getElementById('tagPicker');
+    if (tagPicker) tagPicker.style.display = 'none';
 }
 
 // --- 功能 3: 深色模式切換 ---
@@ -234,17 +270,17 @@ function toggleTheme() {
     const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
     
     document.documentElement.setAttribute('data-theme', newTheme);
-    document.getElementById('themeToggle').innerText = newTheme === 'dark' ? '☀️' : '🌙';
+    const themeToggle = document.getElementById('themeToggle');
+    if (themeToggle) themeToggle.innerText = newTheme === 'dark' ? '☀️' : '🌙';
     
-    // 儲存設定到瀏覽器
     localStorage.setItem('theme', newTheme);
 }
 
-// 頁面載入時檢查深色模式設定
 document.addEventListener('DOMContentLoaded', () => {
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme === 'dark') {
         document.documentElement.setAttribute('data-theme', 'dark');
-        document.getElementById('themeToggle').innerText = '☀️';
+        const themeToggle = document.getElementById('themeToggle');
+        if (themeToggle) themeToggle.innerText = '☀️';
     }
 });

@@ -19,12 +19,16 @@
         </div>
     </div>
 </div>
+
 <div id="tagPicker" class="tag-picker">
     <div class="tag-picker-content">
         <div class="tag-picker-header">
             <span>選擇分類標籤</span>
             <span class="close-tag-btn" onclick="hideTagFilter()">&times;</span>
         </div>
+        
+        <input type="text" id="tagSearchInput" placeholder="搜尋標籤名稱..." onkeyup="searchTags()">
+        
         <div id="tagCloud" class="tag-cloud"></div>
     </div>
 </div>
@@ -40,7 +44,7 @@
     </h1>
     
     <div class="search-container">
-         <div class="site-notice">最後更新時間2026/5/6 0:09 新增50則</div>
+         <div class="site-notice">最後更新時間2026/5/13 23:05</div>
     <input type="text" id="searchInput" placeholder="搜尋標題、內容或標籤..." onkeyup="searchCopypasta()">
     <div class="action-buttons">
         <button class="action-btn" onclick="getRandomPasta()">🎲 隨機抽一則</button>

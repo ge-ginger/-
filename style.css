@@ -489,3 +489,22 @@ body { background-color: var(--bg-color); color: var(--text-color); transition: 
         font-size: 12px; /* 手機版再稍微縮小一點點，看起來更精緻 */
     }
 }
+/* 標籤篩選器內的搜尋框樣式 */
+#tagSearchInput {
+    width: 100%;
+    padding: 10px 15px;
+    margin-top: 5px;
+    margin-bottom: 12px;
+    font-size: 14px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    outline: none;
+    box-sizing: border-box;
+    background-color: var(--input-bg);
+    color: var(--text-color);
+    transition: border-color 0.3s;
+}
+
+#tagSearchInput:focus {
+    border-color: var(--accent-color);
+}
